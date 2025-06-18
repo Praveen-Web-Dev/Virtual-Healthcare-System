@@ -1,0 +1,33 @@
+﻿@model GpReg.Models.User
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>Register</h2>
+
+<form asp-action="Register" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div>
+        <label>Full Name</label>
+        <input asp-for="FullName" class="form-control"/>
+    </div>
+
+    <div>
+        <label>Email</label>
+        <input asp-for="Email" class="form-control"/>
+    </div>
+    <div>
+        <label>Password</label>
+        <input asp-for="PasswordHash" type="password" class="form-control"/>
+    </div>
+
+    <div>
+        <label>Role</label>
+        <select asp-for="Role" class="form-control">
+            <option value="Patient">Patient</option>
+            <option value="Doctor">Doctor</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Register</button>
+</form>
