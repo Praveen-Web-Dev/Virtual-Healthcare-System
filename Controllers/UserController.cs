@@ -23,10 +23,12 @@ namespace GpReg.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(User user)
         {
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 //simple check for existing user
                 var exists = await _context.Users.AnyAsync(u => u.Email == user.Email);
-                if (exists) {
+                if (exists)
+                {
                     ModelState.AddModelError("Email", "Email already Registered");
                     return View(user);
                 }
@@ -49,16 +51,45 @@ namespace GpReg.Controllers
         public async Task<IActionResult> Login(string email, string password)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
-            if (user != null) { 
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserRole", user.Role);
-            HttpContext.Session.SetString("UserName", user.FullName);
+            if (user != null)
+            {
+                HttpContext.Session.SetInt32("UserId", user.Id);
+                HttpContext.Session.SetString("UserRole", user.Role);
+                HttpContext.Session.SetString("UserName", user.FullName);
 
                 return RedirectToAction("Dashboard");
             }
 
             ViewBag.Error = "Invalid emial or password";
             return View();
+        }
+
+        //GET: User/Dashboard
+        public IActionResult Dashboard()
+        {
+            var username = HttpContext.Session.GetString("UserName");
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+            ViewBag.UserName = username;
+            return View();
+        }
+
+        //GET User/Logout
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            Response.Cookies.Delete(".AspNetCore.Session");
+            return RedirectToAction("Login");
+        }
+
+        public IActionResult Logout(string message)
+        {
+            HttpContext.Session.Clear();
+            Response.Cookies.Delete(".AspNetCore.Session");
+            ViewBag.Message = message;
+            return RedirectToAction("Login");
         }
     }
 }
